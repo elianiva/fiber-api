@@ -3,10 +3,9 @@ package handlers
 import (
 	"context"
 	"encoding/json"
-	"fiber-api/helpers"
-	"fmt"
 	"log"
 
+	"github.com/elianiva/fiber-api/helpers"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -36,14 +35,14 @@ func GetBooks(c *fiber.Ctx) error {
 	}
 
 	// get cursor to iterate through available data
-	cur, err := collection.Find(context.Background(), filter)
-	if err != nil {
+	cur, curErr := collection.Find(context.Background(), filter)
+	if curErr != nil {
 		errResp, _ := json.Marshal(helpers.Result{
 			Status: "500",
 			Data:   make([]helpers.Book, 0),
 		})
 		c.Status(500).Send(errResp)
-		log.Fatal(err)
+		log.Fatal(curErr)
 	}
 	defer cur.Close(context.Background())
 
@@ -66,7 +65,7 @@ func GetBooks(c *fiber.Ctx) error {
 	})
 
 	// send back the data
-	// TODO: change this to 200 message instead
+	// TODO: change this to message instead
 	c.Set("Content-Type", "application/json")
 	return c.SendString(string(jsonResp))
 }

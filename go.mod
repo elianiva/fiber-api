@@ -1,4 +1,4 @@
-module fiber-api
+module github.com/elianiva/fiber-api
 
 go 1.15
 
