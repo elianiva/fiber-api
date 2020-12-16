@@ -21,7 +21,7 @@ func AddBook(c *fiber.Ctx) error {
 
 	// get data from request body
 	var book helpers.Book
-	json.Unmarshal([]byte(c.Body()), &book)
+	json.Unmarshal(c.Body(), &book)
 
 	// insert data to mongodb
 	_, insertErr := collection.InsertOne(context.Background(), book)
