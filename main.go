@@ -1,17 +1,27 @@
 package main
 
 import (
-	// "fmt"
-	"github.com/gofiber/fiber/v2"
 	"log"
+
+	"fiber-api/handlers"
+	"github.com/gofiber/fiber/v2"
 )
+
+const PORT string = ":3000"
 
 func main() {
 	app := fiber.New()
 
+	// routes
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, 世界!")
+		return c.SendString("Henlo")
 	})
 
-	log.Fatal(app.Listen(":3000"))
+	app.Get("/api/book/", handlers.GetBooks)
+	app.Get("/api/book/id/:id", handlers.GetBooks)
+	app.Get("/api/book/name/:name", handlers.GetBooks)
+	app.Post("/api/book", handlers.AddBook)
+
+	// listen to this port
+	log.Fatal(app.Listen(PORT))
 }
