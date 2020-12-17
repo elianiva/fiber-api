@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"encoding/json"
-	"log"
 
 	"github.com/elianiva/fiber-api/helpers"
 	"github.com/gofiber/fiber/v2"
@@ -17,12 +16,7 @@ func DeleteBook(c *fiber.Ctx) error {
 	)
 
 	if err != nil {
-		errResp, _ := json.Marshal(helpers.Result{
-			Status: "500",
-			Data:   make([]helpers.Book, 0),
-		})
-		c.Status(500).Send(errResp)
-		log.Fatal(err)
+		helpers.ThrowErr(c, err, "500")
 	}
 
 	// get params
@@ -33,20 +27,16 @@ func DeleteBook(c *fiber.Ctx) error {
 	// get cursor to iterate through available data
 	_, delErr := collection.DeleteOne(context.Background(), filter)
 	if delErr != nil {
-		errResp, _ := json.Marshal(helpers.Result{
-			Status: "500",
-			Data:   make([]helpers.Book, 0),
-		})
-		c.Status(500).Send(errResp)
-		log.Fatal(err)
+		helpers.ThrowErr(c, delErr, "500")
 	}
 
 	// TODO: change this to success message instead
 	c.Set("Content-Type", "application/json")
 	result := make([]helpers.Book, 0)
 	jsonResp, _ := json.Marshal(helpers.Result{
-		Status: "202",
-		Data:   result,
+		Status:  "200",
+		Message: "Data has been successfully deleted.",
+		Data:    result,
 	})
 	return c.Send(jsonResp)
 }
