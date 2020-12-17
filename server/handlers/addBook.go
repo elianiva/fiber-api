@@ -33,7 +33,6 @@ func AddBook(c *fiber.Ctx) error {
 	if err != nil {
 		helpers.ThrowErr(c, fileErr, "500")
 	}
-	fmt.Println(count)
 
 	zeroRes := make([]helpers.Book, 0)
 	if count >= 1 {
@@ -52,11 +51,11 @@ func AddBook(c *fiber.Ctx) error {
 		Name:   c.FormValue("name"),
 		Author: c.FormValue("author"),
 		Pages:  pages,
-		ImgUrl: fmt.Sprintf("/public/images/%d-%s", timestamp, file.Filename),
+		ImgUrl: fmt.Sprintf("/images/%d-%s", timestamp, file.Filename),
 	}
 
 	// save file
-	saveErr := c.SaveFile(file, fmt.Sprintf("./public/images/%s", file.Filename))
+	saveErr := c.SaveFile(file, fmt.Sprintf("./public/images/%d-%s", timestamp, file.Filename))
 	if saveErr != nil {
 		helpers.ThrowErr(c, saveErr, "500")
 	}
