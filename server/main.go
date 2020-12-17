@@ -29,5 +29,5 @@ func main() {
 	app.Patch("/api/book/id/:id", handlers.UpdateBook)
 
 	// listen to this port
-	log.Fatal(app.Listen(helpers.GetEnv("PORT")))
+	log.Fatal(app.Listen(":" + helpers.GetEnv("PORT")))
 }
