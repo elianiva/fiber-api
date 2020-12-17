@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/elianiva/fiber-api/helpers"
 	"go.mongodb.org/mongo-driver/bson"
@@ -44,11 +45,12 @@ func AddBook(c *fiber.Ctx) error {
 	}
 
 	// make new data instance
+	timestamp := time.Now().UnixNano() / int64(time.Millisecond)
 	book := helpers.Book{
 		Name:   c.FormValue("name"),
 		Author: c.FormValue("author"),
 		Pages:  pages,
-		ImgUrl: "/public/images/" + file.Filename,
+		ImgUrl: fmt.Sprintf("/public/images/%d-%s", timestamp, file.Filename),
 	}
 
 	// save file
