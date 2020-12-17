@@ -15,6 +15,9 @@ func main() {
 	// use cors
 	app.Use(cors.New())
 
+	// serve static files (images)
+	app.Static("/", "./public")
+
 	// default routes, nothing interesting here
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello 世界！")
