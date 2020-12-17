@@ -27,9 +27,19 @@ func AddBook(c *fiber.Ctx) error {
 		helpers.ThrowErr(c, fileErr, "500")
 	}
 
-	// get data from request body
-	var book helpers.Book
-	json.Unmarshal(c.Body(), &book)
+	// make new data instance
+	book := helpers.Book{
+		Name:   c.FormValue("name"),
+		Author: c.FormValue("author"),
+		Pages:  pages,
+		ImgUrl: "/public/images/" + file.Filename,
+	}
+
+	// save file
+	saveErr := c.SaveFile(file, fmt.Sprintf("./public/images/%s", file.Filename))
+	if saveErr != nil {
+		helpers.ThrowErr(c, saveErr, "500")
+	}
 
 	// insert data to mongodb
 	_, insertErr := collection.InsertOne(context.Background(), book)
