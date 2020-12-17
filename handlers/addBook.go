@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/elianiva/fiber-api/helpers"
+	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -25,6 +26,21 @@ func AddBook(c *fiber.Ctx) error {
 	file, fileErr := c.FormFile("img")
 	if fileErr != nil {
 		helpers.ThrowErr(c, fileErr, "500")
+	}
+
+	count, err := collection.CountDocuments(context.Background(), bson.M{"name": c.FormValue("name")})
+	if err != nil {
+		helpers.ThrowErr(c, fileErr, "500")
+	}
+
+	zeroRes := make([]helpers.Book, 0)
+	if count >= 1 {
+		jsonRes, _ := json.Marshal(helpers.Result{
+			Status:  "200",
+			Message: "Data already exists",
+			Data:    zeroRes,
+		})
+		c.Send(jsonRes)
 	}
 
 	// make new data instance
@@ -47,13 +63,12 @@ func AddBook(c *fiber.Ctx) error {
 		helpers.ThrowErr(c, insertErr, "500")
 	}
 
-	// send back the data
-	// TODO: change this to success message instead
 	c.Set("Content-Type", "application/json")
 	result := make([]helpers.Book, 0)
 	jsonResp, _ := json.Marshal(helpers.Result{
-		Status: "201",
-		Data:   result,
+		Status:  "201",
+		Message: "Data has been successfully created.",
+		Data:    result,
 	})
 	return c.Send(jsonResp)
 }

@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 	"encoding/json"
-	"log"
 
 	"github.com/elianiva/fiber-api/helpers"
 	"github.com/gofiber/fiber/v2"
@@ -48,13 +47,11 @@ func GetBooks(c *fiber.Ctx) error {
 		c.Send(jsonRes)
 	}
 
-	jsonResp, _ := json.Marshal(helpers.Result{
-		Status: "200",
-		Data:   result,
-	})
-
-	// send back the data
-	// TODO: change this to message instead
 	c.Set("Content-Type", "application/json")
-	return c.SendString(string(jsonResp))
+	jsonResp, _ := json.Marshal(helpers.Result{
+		Status:  "200",
+		Message: "Data has been successfully retrieved.",
+		Data:    result,
+	})
+	return c.Send(jsonResp)
 }
