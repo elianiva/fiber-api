@@ -33,15 +33,17 @@ func AddBook(c *fiber.Ctx) error {
 	if err != nil {
 		helpers.ThrowErr(c, fileErr, "500")
 	}
+	fmt.Println(count)
 
 	zeroRes := make([]helpers.Book, 0)
 	if count >= 1 {
+		c.Set("Content-Type", "application/json")
 		jsonRes, _ := json.Marshal(helpers.Result{
 			Status:  "200",
 			Message: "Data already exists",
 			Data:    zeroRes,
 		})
-		c.Send(jsonRes)
+		return c.Send(jsonRes)
 	}
 
 	// make new data instance

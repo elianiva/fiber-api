@@ -40,11 +40,12 @@ func GetBooks(c *fiber.Ctx) error {
 	cur.All(context.Background(), &result)
 
 	if len(result) == 0 {
+		c.Set("Content-Type", "application/json")
 		jsonRes, _ := json.Marshal(helpers.Result{
 			Status: "200",
 			Data:   result,
 		})
-		c.Send(jsonRes)
+		return c.Send(jsonRes)
 	}
 
 	c.Set("Content-Type", "application/json")
