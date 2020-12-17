@@ -3,8 +3,10 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"strconv"
+
 	"github.com/elianiva/fiber-api/helpers"
-	"log"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -15,8 +17,14 @@ func AddBook(c *fiber.Ctx) error {
 	)
 
 	if err != nil {
-		c.Status(500).Send([]byte("Error"))
-		log.Fatal(err)
+		helpers.ThrowErr(c, err, "500")
+	}
+
+	// get file and pages
+	pages, _ := strconv.Atoi(c.FormValue("pages"))
+	file, fileErr := c.FormFile("img")
+	if fileErr != nil {
+		helpers.ThrowErr(c, fileErr, "500")
 	}
 
 	// get data from request body
@@ -26,8 +34,7 @@ func AddBook(c *fiber.Ctx) error {
 	// insert data to mongodb
 	_, insertErr := collection.InsertOne(context.Background(), book)
 	if insertErr != nil {
-		c.Status(500).Send([]byte("Error"))
-		log.Fatal(insertErr)
+		helpers.ThrowErr(c, insertErr, "500")
 	}
 
 	// send back the data

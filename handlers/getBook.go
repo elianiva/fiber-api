@@ -17,12 +17,7 @@ func GetBooks(c *fiber.Ctx) error {
 	)
 
 	if err != nil {
-		errResp, _ := json.Marshal(helpers.Result{
-			Status: "500",
-			Data:   make([]helpers.Book, 0),
-		})
-		c.Status(500).Send(errResp)
-		log.Fatal(err)
+		helpers.ThrowErr(c, err, "500")
 	}
 
 	// get params
@@ -37,12 +32,7 @@ func GetBooks(c *fiber.Ctx) error {
 	// get cursor to iterate through available data
 	cur, curErr := collection.Find(context.Background(), filter)
 	if curErr != nil {
-		errResp, _ := json.Marshal(helpers.Result{
-			Status: "500",
-			Data:   make([]helpers.Book, 0),
-		})
-		c.Status(500).Send(errResp)
-		log.Fatal(curErr)
+		helpers.ThrowErr(c, curErr, "500")
 	}
 	defer cur.Close(context.Background())
 
@@ -51,12 +41,11 @@ func GetBooks(c *fiber.Ctx) error {
 	cur.All(context.Background(), &result)
 
 	if len(result) == 0 {
-		jsonResp, _ := json.Marshal(helpers.Result{
-			Status: "404",
+		jsonRes, _ := json.Marshal(helpers.Result{
+			Status: "200",
 			Data:   result,
 		})
-		c.Set("Content-Type", "application/json")
-		return c.SendString(string(jsonResp))
+		c.Send(jsonRes)
 	}
 
 	jsonResp, _ := json.Marshal(helpers.Result{
